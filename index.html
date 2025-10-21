@@ -260,10 +260,12 @@
         .input-area {
             display: flex;
             gap: 10px;
+            align-items: stretch;
         }
 
         .input-area input {
             flex: 1;
+            min-width: 0;
             padding: 15px 20px;
             border: 2px solid #ffe4e9;
             border-radius: 25px;
@@ -274,6 +276,11 @@
 
         .input-area input:focus {
             border-color: #ffb6c1;
+        }
+
+        .input-area .btn {
+            flex-shrink: 0;
+            white-space: nowrap;
         }
 
         .btn {
