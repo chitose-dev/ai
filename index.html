@@ -100,6 +100,30 @@
             margin-bottom: 10px;
         }
 
+        .scenario-card .difficulty-indicator {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .scenario-card .difficulty-indicator.beginner {
+            background: #e8f4f8;
+            color: #5a9fb8;
+        }
+
+        .scenario-card .difficulty-indicator.intermediate {
+            background: #fff4e6;
+            color: #e67e22;
+        }
+
+        .scenario-card .difficulty-indicator.advanced {
+            background: #ffe4e9;
+            color: #c24a7a;
+        }
+
         .scenario-card p {
             color: #666;
             font-size: 14px;
@@ -114,6 +138,31 @@
             border-radius: 12px;
             font-size: 12px;
             margin-top: 10px;
+            margin-right: 5px;
+        }
+
+        .difficulty-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .difficulty-beginner {
+            background: #e8f4f8;
+            color: #5a9fb8;
+        }
+
+        .difficulty-intermediate {
+            background: #fff4e6;
+            color: #e67e22;
+        }
+
+        .difficulty-advanced {
+            background: #ffe4e9;
+            color: #c24a7a;
         }
 
         /* 対話画面 */
@@ -271,7 +320,42 @@
 
         .create-scenario-btn-container {
             text-align: center;
+        }
+
+        .scenario-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 30px;
+            gap: 20px;
+        }
+
+        .sort-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sort-controls label {
+            color: #d4668f;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .sort-controls select {
+            padding: 8px 15px;
+            border: 2px solid #ffe4e9;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            color: #666;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .sort-controls select:focus {
+            border-color: #ffb6c1;
         }
 
         .action-buttons {
@@ -493,6 +577,15 @@
             .checkbox-group {
                 grid-template-columns: 1fr;
             }
+
+            .scenario-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .sort-controls {
+                justify-content: flex-end;
+            }
         }
     </style>
 </head>
@@ -513,32 +606,41 @@
 
         <!-- シナリオ選択画面 -->
         <div class="scenario-selection">
-            <div class="create-scenario-btn-container">
-                <button class="btn btn-create" onclick="showScenarioCreator()">
-                    ➕ 新しいシナリオを作成
-                </button>
+            <div class="scenario-controls">
+                <div class="create-scenario-btn-container">
+                    <button class="btn btn-create" onclick="showScenarioCreator()">
+                        ➕ 新しいシナリオを作成
+                    </button>
+                </div>
+                <div class="sort-controls">
+                    <label for="sort-select">並び替え：</label>
+                    <select id="sort-select" onchange="sortScenarios()">
+                        <option value="registration">登録順</option>
+                        <option value="difficulty">難易度順</option>
+                    </select>
+                </div>
             </div>
-            <div class="scenario-grid">
+            <div class="scenario-grid" id="scenario-grid">
                 <div class="scenario-card" onclick="startScenario(1)">
-                    <h3>シナリオ1：学校への不安</h3>
+                    <h3>シナリオ1：学校への不安<span class="difficulty-indicator beginner">初級</span></h3>
                     <p>中学2年生の女子生徒。最近学校に行きづらくなっており、友人関係に悩んでいる様子。</p>
                     <span class="scenario-tag">思春期 / 対人関係</span>
                 </div>
 
                 <div class="scenario-card" onclick="startScenario(2)">
-                    <h3>シナリオ2：親子関係の葛藤</h3>
+                    <h3>シナリオ2：親子関係の葛藤<span class="difficulty-indicator intermediate">中級</span></h3>
                     <p>小学5年生の男子児童。両親の期待に応えたい気持ちと、自分のやりたいことの間で揺れている。</p>
                     <span class="scenario-tag">家族 / 自己理解</span>
                 </div>
 
                 <div class="scenario-card" onclick="startScenario(3)">
-                    <h3>シナリオ3：感情の混乱</h3>
+                    <h3>シナリオ3：感情の混乱<span class="difficulty-indicator intermediate">中級</span></h3>
                     <p>高校1年生の生徒。最近イライラすることが多く、自分でも理由がわからず戸惑っている。</p>
                     <span class="scenario-tag">感情理解 / 自己一致</span>
                 </div>
 
                 <div class="scenario-card" onclick="startScenario(4)">
-                    <h3>シナリオ4：沈黙との向き合い</h3>
+                    <h3>シナリオ4：沈黙との向き合い<span class="difficulty-indicator advanced">上級</span></h3>
                     <p>中学3年生の生徒。話したいことがあるようだが、なかなか言葉にできず、長い沈黙が続く。</p>
                     <span class="scenario-tag">沈黙 / 待つ力</span>
                 </div>
@@ -726,22 +828,30 @@
             1: {
                 title: "シナリオ1：学校への不安",
                 description: "中学2年生の女子生徒。最近学校に行きづらくなっており、友人関係に悩んでいる様子。",
-                initialMessage: "こんにちは... 実は、最近学校に行くのがちょっと辛くて..."
+                initialMessage: "こんにちは... 実は、最近学校に行くのがちょっと辛くて...",
+                difficulty: "beginner",
+                order: 1
             },
             2: {
                 title: "シナリオ2：親子関係の葛藤",
                 description: "小学5年生の男子児童。両親の期待に応えたい気持ちと、自分のやりたいことの間で揺れている。",
-                initialMessage: "先生、聞いてもらっていいですか？ お父さんとお母さんのこと、なんだけど..."
+                initialMessage: "先生、聞いてもらっていいですか？ お父さんとお母さんのこと、なんだけど...",
+                difficulty: "intermediate",
+                order: 2
             },
             3: {
                 title: "シナリオ3：感情の混乱",
                 description: "高校1年生の生徒。最近イライラすることが多く、自分でも理由がわからず戸惑っている。",
-                initialMessage: "なんか最近、すごくイライラするんです。自分でも何でかわからなくて..."
+                initialMessage: "なんか最近、すごくイライラするんです。自分でも何でかわからなくて...",
+                difficulty: "intermediate",
+                order: 3
             },
             4: {
                 title: "シナリオ4：沈黙との向き合い",
                 description: "中学3年生の生徒。話したいことがあるようだが、なかなか言葉にできず、長い沈黙が続く。",
-                initialMessage: "......（しばらく黙っている）"
+                initialMessage: "......（しばらく黙っている）",
+                difficulty: "advanced",
+                order: 4
             }
         };
 
@@ -887,6 +997,40 @@
             // 仮の動作：シナリオ選択画面に戻る
             cancelScenarioCreation();
         }
+
+        function sortScenarios() {
+            const sortValue = document.getElementById('sort-select').value;
+            const grid = document.getElementById('scenario-grid');
+            const cards = Array.from(grid.children);
+            
+            if (sortValue === 'difficulty') {
+                cards.sort((a, b) => {
+                    const diffA = a.querySelector('.difficulty-indicator.beginner') ? 1 :
+                                  a.querySelector('.difficulty-indicator.intermediate') ? 2 : 3;
+                    const diffB = b.querySelector('.difficulty-indicator.beginner') ? 1 :
+                                  b.querySelector('.difficulty-indicator.intermediate') ? 2 : 3;
+                    return diffA - diffB;
+                });
+            } else {
+                // 登録順（元の順序に戻す）
+                cards.sort((a, b) => {
+                    const orderA = parseInt(a.getAttribute('data-order'));
+                    const orderB = parseInt(b.getAttribute('data-order'));
+                    return orderA - orderB;
+                });
+            }
+            
+            // カードを再配置
+            cards.forEach(card => grid.appendChild(card));
+        }
+
+        // ページ読み込み時にシナリオカードにdata-order属性を追加
+        window.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.scenario-card');
+            cards.forEach((card, index) => {
+                card.setAttribute('data-order', index + 1);
+            });
+        });
     </script>
 </body>
 </html>
