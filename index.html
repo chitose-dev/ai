@@ -35,7 +35,7 @@
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 30px 20px 20px 20px;
         }
@@ -167,7 +167,7 @@
 
         .heart-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(5, 1fr);
             gap: 20px;
             margin: 40px 0;
         }
@@ -268,7 +268,7 @@
 
         .scenario-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
@@ -293,6 +293,10 @@
             color: #8b7355;
             font-size: 18px;
             margin-bottom: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
         }
 
         .scenario-card .difficulty-indicator {
@@ -301,7 +305,6 @@
             border-radius: 10px;
             font-size: 11px;
             font-weight: 600;
-            margin-left: 8px;
         }
 
         .scenario-card .difficulty-indicator.beginner {
@@ -342,12 +345,14 @@
             align-items: center;
             margin-bottom: 30px;
             gap: 20px;
+            flex-wrap: wrap;
         }
 
         .sort-controls {
             display: flex;
             align-items: center;
             gap: 10px;
+            flex-wrap: wrap;
         }
 
         .sort-controls label {
@@ -568,6 +573,7 @@
             gap: 10px;
             justify-content: center;
             margin-top: 20px;
+            flex-wrap: wrap;
         }
 
         /* フィードバック画面 */
@@ -630,7 +636,7 @@
 
         .shimuryo-aspects {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
             gap: 15px;
             margin-top: 20px;
         }
@@ -819,7 +825,7 @@
 
         .checkbox-group {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 12px;
         }
 
@@ -858,9 +864,43 @@
             margin: 5px 0;
         }
 
+        /* タブレットサイズ */
+        @media (max-width: 1200px) {
+            .heart-cards {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .container {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 900px) {
+            header {
+                padding: 15px 20px;
+            }
+
+            .heart-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .scenario-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+
+            .shimuryo-aspects {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            }
+        }
+
+        /* モバイルサイズ */
         @media (max-width: 768px) {
             h1 {
                 font-size: 16px;
+            }
+
+            .subtitle {
+                font-size: 10px;
             }
 
             .header-left {
@@ -880,19 +920,30 @@
                 font-size: 18px;
             }
 
-            .scenario-grid {
-                grid-template-columns: 1fr;
+            .container {
+                padding: 20px 15px;
+            }
+
+            .preparation-container,
+            .dialogue-container,
+            .feedback-container {
+                padding: 25px 20px;
+            }
+
+            .preparation-header h2 {
+                font-size: 22px;
+            }
+
+            .preparation-header p {
+                font-size: 14px;
             }
 
             .heart-cards {
                 grid-template-columns: 1fr;
+                gap: 15px;
             }
 
-            .message-content {
-                max-width: 85%;
-            }
-
-            .checkbox-group {
+            .scenario-grid {
                 grid-template-columns: 1fr;
             }
 
@@ -901,8 +952,25 @@
                 align-items: stretch;
             }
 
+            .create-scenario-btn-container {
+                order: 2;
+            }
+
             .sort-controls {
-                justify-content: flex-end;
+                order: 1;
+                justify-content: space-between;
+            }
+
+            .message-content {
+                max-width: 85%;
+            }
+
+            .chat-area {
+                height: 350px;
+            }
+
+            .checkbox-group {
+                grid-template-columns: 1fr;
             }
 
             .shimuryo-aspects {
@@ -915,6 +983,39 @@
 
             .action-buttons .btn {
                 width: 100%;
+            }
+
+            .feedback-header h2 {
+                font-size: 20px;
+            }
+
+            .btn {
+                padding: 10px 25px;
+                font-size: 13px;
+            }
+
+            .btn-create {
+                padding: 12px 30px;
+                font-size: 14px;
+            }
+        }
+
+        /* 小型モバイル */
+        @media (max-width: 480px) {
+            .heart-card .heart-icon {
+                font-size: 32px;
+            }
+
+            .heart-card .heart-name-ja {
+                font-size: 16px;
+            }
+
+            .heart-card .heart-description {
+                font-size: 12px;
+            }
+
+            .shimuryo-aspects {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -1028,25 +1129,37 @@
             </div>
             <div class="scenario-grid" id="scenario-grid">
                 <div class="scenario-card" onclick="startScenario(1)">
-                    <h3>シナリオ1：学校への不安<span class="difficulty-indicator beginner">初級</span></h3>
+                    <h3>
+                        <span>シナリオ1：学校への不安</span>
+                        <span class="difficulty-indicator beginner">初級</span>
+                    </h3>
                     <p>中学2年生の女子生徒。最近学校に行きづらくなっており、友人関係に悩んでいる様子。</p>
                     <span class="scenario-tag">思春期 / 対人関係</span>
                 </div>
 
                 <div class="scenario-card" onclick="startScenario(2)">
-                    <h3>シナリオ2：親子関係の葛藤<span class="difficulty-indicator intermediate">中級</span></h3>
+                    <h3>
+                        <span>シナリオ2：親子関係の葛藤</span>
+                        <span class="difficulty-indicator intermediate">中級</span>
+                    </h3>
                     <p>小学5年生の男子児童。両親の期待に応えたい気持ちと、自分のやりたいことの間で揺れている。</p>
                     <span class="scenario-tag">家族 / 自己理解</span>
                 </div>
 
                 <div class="scenario-card" onclick="startScenario(3)">
-                    <h3>シナリオ3：感情の混乱<span class="difficulty-indicator intermediate">中級</span></h3>
+                    <h3>
+                        <span>シナリオ3：感情の混乱</span>
+                        <span class="difficulty-indicator intermediate">中級</span>
+                    </h3>
                     <p>高校1年生の生徒。最近イライラすることが多く、自分でも理由がわからず戸惑っている。</p>
                     <span class="scenario-tag">感情理解 / 自己一致</span>
                 </div>
 
                 <div class="scenario-card" onclick="startScenario(4)">
-                    <h3>シナリオ4：沈黙との向き合い<span class="difficulty-indicator advanced">上級</span></h3>
+                    <h3>
+                        <span>シナリオ4：沈黙との向き合い</span>
+                        <span class="difficulty-indicator advanced">上級</span>
+                    </h3>
                     <p>中学3年生の生徒。話したいことがあるようだが、なかなか言葉にできず、長い沈黙が続く。</p>
                     <span class="scenario-tag">沈黙 / 待つ力</span>
                 </div>
