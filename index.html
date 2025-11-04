@@ -680,6 +680,53 @@
             font-size: 12px;
         }
 
+        /* 評価項目のスタイル */
+        .attitude-evaluations {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .evaluation-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #d4c17f;
+            transition: all 0.3s ease;
+        }
+
+        .evaluation-item:hover {
+            box-shadow: 0 4px 15px rgba(139, 115, 85, 0.15);
+            transform: translateX(5px);
+        }
+
+        .evaluation-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .eval-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .eval-title {
+            color: #8b7355;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .evaluation-text {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.7;
+            margin: 0;
+            padding-left: 34px;
+        }
+
         /* 省察入力セクション */
         .personal-reflection-section {
             background: #e8f4f8;
@@ -1325,54 +1372,71 @@
 
                 <div class="reflection-section">
                     <h3>✨ 臨床態度の観点から</h3>
-                    <div class="shimuryo-aspects">
-                        <div class="aspect-card">
-                            <div class="icon">🌸</div>
-                            <div class="label-ja">慈</div>
-                            <div class="label-en">Loving-kindness</div>
-                            <div class="description">幸せを願う心</div>
+                    <p style="color: #666; margin-bottom: 20px;">今回の対話における、各臨床態度の実践を振り返ってみましょう。</p>
+                    
+                    <div class="attitude-evaluations">
+                        <div class="evaluation-item">
+                            <div class="evaluation-header">
+                                <span class="eval-icon">🌸</span>
+                                <span class="eval-title">慈（Loving-kindness）</span>
+                            </div>
+                            <p class="evaluation-text">相手の幸せを願う温かさが、あなたの言葉の端々から感じられました。焦らず、ただ"幸せであってほしい"という願いを静かに向けることができていましたね。</p>
                         </div>
-                        <div class="aspect-card">
-                            <div class="icon">🌊</div>
-                            <div class="label-ja">悲</div>
-                            <div class="label-en">Compassion</div>
-                            <div class="description">共に感じる心</div>
+
+                        <div class="evaluation-item">
+                            <div class="evaluation-header">
+                                <span class="eval-icon">🌊</span>
+                                <span class="eval-title">悲（Compassion）</span>
+                            </div>
+                            <p class="evaluation-text">相手の苦しみを消そうとせず、共に感じる姿勢がありました。あなたがそばにいることで、相手の痛みが少しやわらいでいたように見えます。</p>
                         </div>
-                        <div class="aspect-card">
-                            <div class="icon">☀️</div>
-                            <div class="label-ja">喜</div>
-                            <div class="label-en">Empathic Joy</div>
-                            <div class="description">ともに喜ぶ心</div>
+
+                        <div class="evaluation-item">
+                            <div class="evaluation-header">
+                                <span class="eval-icon">☀️</span>
+                                <span class="eval-title">喜（Empathic Joy）</span>
+                            </div>
+                            <p class="evaluation-text">相手の小さな変化や成長を見つけ、それを心から喜ぶ姿勢が感じられました。比較や評価ではなく、ただ"ともにうれしい"という気持ちが表れていましたね。</p>
                         </div>
-                        <div class="aspect-card">
-                            <div class="icon">🍃</div>
-                            <div class="label-ja">捨</div>
-                            <div class="label-en">Equanimity</div>
-                            <div class="description">静かな穏やかさ</div>
+
+                        <div class="evaluation-item">
+                            <div class="evaluation-header">
+                                <span class="eval-icon">🍃</span>
+                                <span class="eval-title">捨（Equanimity）</span>
+                            </div>
+                            <p class="evaluation-text">すべてを抱え込まず、判断や執着を手放す瞬間がありました。波が来ても動じない、静かな湖のような穏やかさを保つことができていましたね。</p>
                         </div>
-                        <div class="aspect-card">
-                            <div class="icon">💧</div>
-                            <div class="label-ja">共感的理解</div>
-                            <div class="label-en">Empathic Understanding</div>
-                            <div class="description">相手の世界を感じる</div>
+
+                        <div class="evaluation-item">
+                            <div class="evaluation-header">
+                                <span class="eval-icon">💧</span>
+                                <span class="eval-title">共感的理解（Empathic Understanding）</span>
+                            </div>
+                            <p class="evaluation-text">言葉の奥にある"その人の世界"を感じようとする姿勢がありました。相手の立場から世界を眺めることで、相手の内的照合枠に寄り添うことができていました。</p>
                         </div>
-                        <div class="aspect-card">
-                            <div class="icon">🌷</div>
-                            <div class="label-ja">無条件の肯定</div>
-                            <div class="label-en">Unconditional Regard</div>
-                            <div class="description">存在を大切に思う</div>
+
+                        <div class="evaluation-item">
+                            <div class="evaluation-header">
+                                <span class="eval-icon">🌷</span>
+                                <span class="eval-title">無条件の肯定的配慮（Unconditional Positive Regard）</span>
+                            </div>
+                            <p class="evaluation-text">相手の行動の善し悪しを超えて、存在そのものを大切に思う態度が感じられました。"あなたがここにいてくれていい"という肯定が、あなたの存在から伝わっていました。</p>
                         </div>
-                        <div class="aspect-card">
-                            <div class="icon">🌾</div>
-                            <div class="label-ja">自己一致</div>
-                            <div class="label-en">Congruence</div>
-                            <div class="description">ありのままの誠実さ</div>
+
+                        <div class="evaluation-item">
+                            <div class="evaluation-header">
+                                <span class="eval-icon">🌾</span>
+                                <span class="eval-title">自己一致（Congruence）</span>
+                            </div>
+                            <p class="evaluation-text">感じていること、考えていること、言葉が重なる瞬間がありました。正しさより誠実さを大切にし、飾らずありのままのあなたでいることができていましたね。</p>
                         </div>
-                        <div class="aspect-card">
-                            <div class="icon">🕊️</div>
-                            <div class="label-ja">臨床的禁欲</div>
-                            <div class="label-en">Therapeutic Abstinence</div>
-                            <div class="description">静けさを保つ</div>
+
+                        <div class="evaluation-item">
+                            <div class="evaluation-header">
+                                <span class="eval-icon">🕊️</span>
+                                <span class="eval-title">臨床的禁欲（Therapeutic Abstinence）</span>
+                            </div>
+                            <p class="evaluation-text">自分の欲求や承認欲を脇に置き、相手の物語に入りすぎず静けさを保つことができていました。あなたの静けさが、相手にとって安全な空間を作っていました。</p>
                         </div>
                     </div>
                 </div>
