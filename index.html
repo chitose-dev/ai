@@ -167,7 +167,7 @@
 
         .heart-cards {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 20px;
             margin: 40px 0;
         }
@@ -1033,15 +1033,15 @@
         </div>
         <div class="symbols">
             <span class="symbol" title="慈">
-                💗
+                🌸
                 <div class="symbol-tooltip">慈 Loving-kindness</div>
             </span>
             <span class="symbol" title="悲">
-                🤝
+                🌊
                 <div class="symbol-tooltip">悲 Compassion</div>
             </span>
             <span class="symbol" title="喜">
-                ✨
+                ☀️
                 <div class="symbol-tooltip">喜 Empathic Joy</div>
             </span>
             <span class="symbol" title="捨">
@@ -1064,38 +1064,59 @@
 
                 <div class="heart-cards">
                     <div class="heart-card" onclick="selectHeart('metta', this)">
-                        <div class="heart-icon">💗</div>
+                        <div class="heart-icon">🌸</div>
                         <div class="heart-name-ja">慈</div>
                         <div class="heart-name-en">Loving-kindness</div>
-                        <div class="heart-description">相手の幸せを願う、温かく包むような心</div>
+                        <div class="heart-description">幸せであってほしいという願いを静かに向ける</div>
                     </div>
 
                     <div class="heart-card" onclick="selectHeart('karuna', this)">
-                        <div class="heart-icon">🤝</div>
+                        <div class="heart-icon">🌊</div>
                         <div class="heart-name-ja">悲</div>
                         <div class="heart-name-en">Compassion</div>
-                        <div class="heart-description">苦しみに寄り添い、判断せずに感じる心</div>
+                        <div class="heart-description">苦しみを共に感じ、そばにいる</div>
                     </div>
 
                     <div class="heart-card" onclick="selectHeart('mudita', this)">
-                        <div class="heart-icon">✨</div>
+                        <div class="heart-icon">☀️</div>
                         <div class="heart-name-ja">喜</div>
                         <div class="heart-name-en">Empathic Joy</div>
-                        <div class="heart-description">相手の成長や喜びを共に喜ぶ心</div>
+                        <div class="heart-description">他者の幸せを自分のことのように感じる</div>
                     </div>
 
                     <div class="heart-card" onclick="selectHeart('upekkha', this)">
                         <div class="heart-icon">🍃</div>
                         <div class="heart-name-ja">捨</div>
                         <div class="heart-name-en">Equanimity</div>
-                        <div class="heart-description">巻き込まれず、平静に見守る心</div>
+                        <div class="heart-description">判断や執着を手放し、静かな穏やかさを保つ</div>
+                    </div>
+
+                    <div class="heart-card" onclick="selectHeart('empathic-understanding', this)">
+                        <div class="heart-icon">💧</div>
+                        <div class="heart-name-ja">共感的理解</div>
+                        <div class="heart-name-en">Empathic Understanding</div>
+                        <div class="heart-description">相手の世界を、その人の立場から感じる</div>
+                    </div>
+
+                    <div class="heart-card" onclick="selectHeart('unconditional-regard', this)">
+                        <div class="heart-icon">🌷</div>
+                        <div class="heart-name-ja">無条件の肯定的配慮</div>
+                        <div class="heart-name-en">Unconditional Positive Regard</div>
+                        <div class="heart-description">存在そのものを大切に思う</div>
                     </div>
 
                     <div class="heart-card" onclick="selectHeart('congruence', this)">
-                        <div class="heart-icon">🎯</div>
+                        <div class="heart-icon">🌾</div>
                         <div class="heart-name-ja">自己一致</div>
                         <div class="heart-name-en">Congruence</div>
-                        <div class="heart-description">内側と外側が一致している誠実さ</div>
+                        <div class="heart-description">飾らず、ありのままの誠実さ</div>
+                    </div>
+
+                    <div class="heart-card" onclick="selectHeart('abstinence', this)">
+                        <div class="heart-icon">🕊️</div>
+                        <div class="heart-name-ja">臨床的禁欲</div>
+                        <div class="heart-name-en">Therapeutic Abstinence</div>
+                        <div class="heart-description">自分の欲求を脇に置き、静けさを保つ</div>
                     </div>
                 </div>
 
@@ -1303,37 +1324,55 @@
                 </div>
 
                 <div class="reflection-section">
-                    <h3>✨ 四無量心の観点から</h3>
+                    <h3>✨ 臨床態度の観点から</h3>
                     <div class="shimuryo-aspects">
                         <div class="aspect-card">
-                            <div class="icon">💗</div>
+                            <div class="icon">🌸</div>
                             <div class="label-ja">慈</div>
                             <div class="label-en">Loving-kindness</div>
-                            <div class="description">温かく包む態度</div>
+                            <div class="description">幸せを願う心</div>
                         </div>
                         <div class="aspect-card">
-                            <div class="icon">🤝</div>
+                            <div class="icon">🌊</div>
                             <div class="label-ja">悲</div>
                             <div class="label-en">Compassion</div>
-                            <div class="description">苦しみを共に見る</div>
+                            <div class="description">共に感じる心</div>
                         </div>
                         <div class="aspect-card">
-                            <div class="icon">✨</div>
+                            <div class="icon">☀️</div>
                             <div class="label-ja">喜</div>
                             <div class="label-en">Empathic Joy</div>
-                            <div class="description">成長を見守る</div>
+                            <div class="description">ともに喜ぶ心</div>
                         </div>
                         <div class="aspect-card">
                             <div class="icon">🍃</div>
                             <div class="label-ja">捨</div>
                             <div class="label-en">Equanimity</div>
-                            <div class="description">巻き込まれず見守る</div>
+                            <div class="description">静かな穏やかさ</div>
                         </div>
                         <div class="aspect-card">
-                            <div class="icon">🎯</div>
+                            <div class="icon">💧</div>
+                            <div class="label-ja">共感的理解</div>
+                            <div class="label-en">Empathic Understanding</div>
+                            <div class="description">相手の世界を感じる</div>
+                        </div>
+                        <div class="aspect-card">
+                            <div class="icon">🌷</div>
+                            <div class="label-ja">無条件の肯定</div>
+                            <div class="label-en">Unconditional Regard</div>
+                            <div class="description">存在を大切に思う</div>
+                        </div>
+                        <div class="aspect-card">
+                            <div class="icon">🌾</div>
                             <div class="label-ja">自己一致</div>
                             <div class="label-en">Congruence</div>
-                            <div class="description">内外の誠実さ</div>
+                            <div class="description">ありのままの誠実さ</div>
+                        </div>
+                        <div class="aspect-card">
+                            <div class="icon">🕊️</div>
+                            <div class="label-ja">臨床的禁欲</div>
+                            <div class="label-en">Therapeutic Abstinence</div>
+                            <div class="description">静けさを保つ</div>
                         </div>
                     </div>
                 </div>
@@ -1381,29 +1420,44 @@
 
         const heartMessages = {
             metta: {
-                icon: '💗',
+                icon: '🌸',
                 name: '慈（Loving-kindness）',
-                message: '今日は「慈（やさしさ）」の心を意識してみましょう。\n\n相手の幸せを願う気持ちを、そっと心の中に灯してください。\n温かく包むような存在として、対話に臨んでみましょう。'
+                message: '今日は"慈（Loving-kindness）"の心を意識してみましょう。\n\n相手を変えようとせず、"幸せであってほしい"という願いだけを静かに向けてください。\nその願いは、相手だけでなく、自分自身にも届いています。'
             },
             karuna: {
-                icon: '🤝',
+                icon: '🌊',
                 name: '悲（Compassion）',
-                message: '今日は「悲（寄り添い）」の心を意識してみましょう。\n\n相手の痛みを、判断せずにそのまま感じることから始めてください。\n苦しみを共に見つめる勇気を持って、対話に臨んでみましょう。'
+                message: '今日は"悲（Compassion）"の心を意識してみましょう。\n\n苦しみを消そうとせず、"共に感じる"ことから始めてください。\nあなたがそばにいることで、痛みは少しやわらぐかもしれません。'
             },
             mudita: {
-                icon: '✨',
+                icon: '☀️',
                 name: '喜（Empathic Joy）',
-                message: '今日は「喜（ともに喜ぶ）」の心を意識してみましょう。\n\n相手の小さな成長や変化を見つけ、それを心から喜んでください。\n相手の可能性を信じる気持ちを持って、対話に臨んでみましょう。'
+                message: '今日は"喜（Empathic Joy）"の心を意識してみましょう。\n\n他者の幸せや成長を、自分のことのように感じてみてください。\n嫉妬や比較を手放し、"ともにうれしい"を分かち合いましょう。'
             },
             upekkha: {
                 icon: '🍃',
                 name: '捨（Equanimity）',
-                message: '今日は「捨（平静）」の心を意識してみましょう。\n\n相手の苦しみに巻き込まれず、しかし見捨てることもなく。\n静かに見守る力を大切にして、対話に臨んでみましょう。'
+                message: '今日は"捨（Equanimity）"の心を意識してみましょう。\n\nすべてを抱え込まず、判断や執着を手放してみてください。\nどんな波が来ても、あなたの心の奥には、静かな湖のような穏やかさが残っています。'
+            },
+            'empathic-understanding': {
+                icon: '💧',
+                name: '共感的理解（Empathic Understanding）',
+                message: '今日は"共感的理解（Empathic Understanding）"を意識してみましょう。\n\n言葉の奥にある"その人の世界"を感じてみてください。\n相手の立場から世界を眺めることが、癒しの始まりです。'
+            },
+            'unconditional-regard': {
+                icon: '🌷',
+                name: '無条件の肯定的配慮（Unconditional Positive Regard）',
+                message: '今日は"無条件の肯定（Unconditional Positive Regard）"の心を意識してみましょう。\n\nたとえ相手の行動が理解できなくても、存在そのものを大切に思ってください。\n"あなたがここにいてくれていい"という肯定を、心の中で伝えてみてください。'
             },
             congruence: {
-                icon: '🎯',
+                icon: '🌾',
                 name: '自己一致（Congruence）',
-                message: '今日は「自己一致」を意識してみましょう。\n\nあなたの内側で感じていることと、外側で表現することを一致させてください。\n誠実さを持って、自分自身に正直に対話に臨んでみましょう。'
+                message: '今日は"自己一致（Congruence）"の心を意識してみましょう。\n\nあなたの感じていること、考えていること、言葉が重なる瞬間を見つけてください。\n正しさより、誠実さ。飾らず、ありのままのあなたでいてください。'
+            },
+            abstinence: {
+                icon: '🕊️',
+                name: '臨床的禁欲（Therapeutic Abstinence）',
+                message: '今日は"臨床的禁欲（Therapeutic Abstinence）"を意識してみましょう。\n\n自分の欲求や承認欲を、少しだけ脇に置いてみてください。\n相手の物語に入りすぎず、あなたの静けさを保つことが、最大の支援になります。'
             }
         };
 
