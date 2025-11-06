@@ -120,9 +120,182 @@
             opacity: 1;
         }
 
+        /* ウェルカムページ（表紙） */
+        .welcome-screen {
+            display: block;
+        }
+        
+        .welcome-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(139, 115, 85, 0.15);
+            text-align: center;
+        }
+        
+        .welcome-header {
+            margin-bottom: 40px;
+        }
+        
+        .welcome-header h2 {
+            color: #8b7355;
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+        
+        .welcome-header .subtitle-en {
+            color: #9d8b6f;
+            font-size: 14px;
+            font-style: italic;
+            margin-bottom: 25px;
+        }
+        
+        .welcome-image {
+            max-width: 300px;
+            width: 100%;
+            margin: 0 auto 30px auto;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        
+        .welcome-image img {
+            width: 100%;
+            height: auto;
+        }
+        
+        .welcome-description {
+            max-width: 700px;
+            margin: 0 auto 40px auto;
+            color: #555;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+        
+        .principle-icons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+        
+        .principle-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .principle-icon .icon {
+            font-size: 24px;
+        }
+        
+        .principle-icon .name {
+            font-size: 12px;
+            color: #9d8b6f;
+        }
+        
+        /* 心の解説ページ */
+        .heart-explanation-screen {
+            display: none;
+        }
+        
+        .explanation-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(139, 115, 85, 0.15);
+        }
+        
+        .explanation-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .explanation-header .icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+        
+        .explanation-header h2 {
+            color: #8b7355;
+            font-size: 26px;
+            margin-bottom: 5px;
+        }
+        
+        .explanation-header .subtitle-en {
+            color: #9d8b6f;
+            font-size: 14px;
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+        
+        .explanation-content {
+            margin-bottom: 30px;
+        }
+        
+        .explanation-section {
+            background: #fef6b0;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #d4c17f;
+        }
+        
+        .explanation-section h3 {
+            color: #8b7355;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        
+        .explanation-section p {
+            color: #555;
+            font-size: 15px;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+        
+        .explanation-section p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .practice-tips {
+            background: #e8f4f8;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 20px;
+            border-left: 4px solid #5a9fb8;
+        }
+        
+        .practice-tips h3 {
+            color: #5a9fb8;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        
+        .practice-tips ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .practice-tips li {
+            color: #555;
+            font-size: 15px;
+            line-height: 1.8;
+            padding: 8px 0 8px 25px;
+            position: relative;
+        }
+        
+        .practice-tips li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #5a9fb8;
+        }
+        
         /* 導入画面（心の準備） */
         .heart-preparation-screen {
-            display: block;
+            display: none;
         }
 
         .preparation-container {
@@ -1070,7 +1243,7 @@
 <body>
     <header>
         <div class="header-left">
-            <div class="header-character">
+            <div class="header-character" onclick="backToHome()" style="cursor: pointer;">
                 <img src="sukoyaka-character.jpeg" alt="すこやかキャラクター">
             </div>
             <div class="logo-container">
@@ -1079,6 +1252,7 @@
             </div>
         </div>
         <div class="symbols">
+            <!-- 四無量心 -->
             <span class="symbol" title="慈">
                 🌸
                 <div class="symbol-tooltip">慈 Loving-kindness</div>
@@ -1095,10 +1269,127 @@
                 🍃
                 <div class="symbol-tooltip">捨 Equanimity</div>
             </span>
+            <!-- ロジャース三原則 -->
+            <span class="symbol" title="共感的理解">
+                💧
+                <div class="symbol-tooltip">共感的理解 Empathic Understanding</div>
+            </span>
+            <span class="symbol" title="無条件の肯定的配慮">
+                🌷
+                <div class="symbol-tooltip">無条件の肯定的配慮 Unconditional Positive Regard</div>
+            </span>
+            <span class="symbol" title="自己一致">
+                🌾
+                <div class="symbol-tooltip">自己一致 Congruence</div>
+            </span>
+            <!-- 臨床的禁欲 -->
+            <span class="symbol" title="臨床的禁欲">
+                🕊️
+                <div class="symbol-tooltip">臨床的禁欲 Therapeutic Abstinence</div>
+            </span>
         </div>
     </header>
     
     <div class="container">
+        <!-- ウェルカムページ（表紙） -->
+        <div class="welcome-screen">
+            <div class="welcome-container">
+                <div class="welcome-header">
+                    <h2>四無量心AIトレーニング</h2>
+                    <div class="subtitle-en">Four Boundless Hearts Training System</div>
+                </div>
+                
+                <div class="welcome-image">
+                    <img src="sukoyaka-character.jpeg" alt="すこやかキャラクター">
+                </div>
+                
+                <div class="welcome-description">
+                    <p>こちらは子どもの心に寄り添う支援者のための心のトレーニングシステムです。</p>
+                    <p>東洋の「四無量心」とロジャーズの「カウンセリング三原則」という二つの源流から生まれた
+                    8つの心の在り方を、AIとの対話を通じて練習することができます。</p>
+                    <p>支援者としてのあなたの「心の器」を育て、クライアントの内側にある
+                    回復力や成長力が発揮される空間づくりを支援します。</p>
+                </div>
+                
+                <div class="principle-icons">
+                    <div class="principle-icon">
+                        <div class="icon">🌸</div>
+                        <div class="name">慈</div>
+                    </div>
+                    <div class="principle-icon">
+                        <div class="icon">🌊</div>
+                        <div class="name">悲</div>
+                    </div>
+                    <div class="principle-icon">
+                        <div class="icon">☀️</div>
+                        <div class="name">喜</div>
+                    </div>
+                    <div class="principle-icon">
+                        <div class="icon">🍃</div>
+                        <div class="name">捨</div>
+                    </div>
+                    <div class="principle-icon">
+                        <div class="icon">💧</div>
+                        <div class="name">共感的理解</div>
+                    </div>
+                    <div class="principle-icon">
+                        <div class="icon">🌷</div>
+                        <div class="name">無条件の肯定的配慮</div>
+                    </div>
+                    <div class="principle-icon">
+                        <div class="icon">🌾</div>
+                        <div class="name">自己一致</div>
+                    </div>
+                    <div class="principle-icon">
+                        <div class="icon">🕊️</div>
+                        <div class="name">臨床的禁欲</div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="showHeartSelectionScreen()">
+                        トレーニングを始める →
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 心の解説ページ -->
+        <div class="heart-explanation-screen">
+            <div class="explanation-container">
+                <div class="explanation-header">
+                    <div class="icon" id="explanation-icon"></div>
+                    <h2 id="explanation-title"></h2>
+                    <div class="subtitle-en" id="explanation-subtitle"></div>
+                </div>
+                
+                <div class="explanation-content">
+                    <div class="explanation-section">
+                        <h3>📝 意味と由来</h3>
+                        <div id="explanation-origin"></div>
+                    </div>
+                    
+                    <div class="explanation-section">
+                        <h3>💗 臨床的意義</h3>
+                        <div id="explanation-clinical"></div>
+                    </div>
+                    
+                    <div class="practice-tips">
+                        <h3>✨ 練習のポイント</h3>
+                        <ul id="explanation-tips"></ul>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="proceedToScenarios()">
+                        シナリオ選択へ進む →
+                    </button>
+                    <button class="btn btn-secondary" onclick="backToHeartSelection()">
+                        心の選択に戻る
+                    </button>
+                </div>
+            </div>
+        </div>
 
         <!-- 導入画面（心の準備） -->
         <div class="heart-preparation-screen">
@@ -1172,8 +1463,8 @@
                 </div>
 
                 <div class="action-buttons">
-                    <button class="btn btn-primary" id="proceed-btn" style="display:none;" onclick="proceedToScenarios()">
-                        シナリオ選択へ進む →
+                    <button class="btn btn-primary" id="proceed-btn" style="display:none;" onclick="showHeartExplanation()">
+                        解説を読む →
                     </button>
                 </div>
             </div>
@@ -1463,7 +1754,7 @@
                 </div>
 
                 <div class="action-buttons">
-                    <button class="btn btn-primary" onclick="backToHeartSelection()">最初から始める</button>
+                    <button class="btn btn-primary" onclick="backToHome()">最初から始める</button>
                     <button class="btn btn-primary" onclick="backToScenarios()">別のシナリオに挑戦</button>
                     <button class="btn btn-secondary" onclick="restartScenario()">同じシナリオをもう一度</button>
                 </div>
