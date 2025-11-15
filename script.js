@@ -1,7 +1,14 @@
+// API設定
+const API_BASE_URL = window.location.origin + '/api';
+
+// セッション管理
+let sessionToken = null;
 let currentScenario = null;
 let messageCount = 0;
 let selectedHeart = null;
 let selectedHeartData = {};
+let conversationHistory = [];
+let currentScenarioData = null;
 
 // 心のメッセージデータ
 const heartMessages = {
@@ -328,17 +335,202 @@ const scenarios = {
     }
 };
 
-// ホーム画面（表紙）へ戻る
+// ===== 認証関連 =====
+
+async function login() {
+    const password = document.getElementById('login-password').value;
+    const errorEl = document.getElementById('login-error');
+    
+    if (!password) {
+        errorEl.textContent = 'パスワードを入力してください';
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/auth/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ password })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            sessionToken = data.token;
+            localStorage.setItem('sessionToken', sessionToken);
+            showMainApp();
+        } else {
+            errorEl.textContent = data.error || 'ログインに失敗しました';
+        }
+    } catch (error) {
+        console.error('Login error:', error);
+        errorEl.textContent = 'ログインに失敗しました。もう一度お試しください。';
+    }
+}
+
+function handleLoginKeyPress(event) {
+    if (event.key === 'Enter') {
+        login();
+    }
+}
+
+function logout() {
+    sessionToken = null;
+    localStorage.removeItem('sessionToken');
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('main-header').style.display = 'none';
+    document.getElementById('main-container').style.display = 'none';
+    document.getElementById('main-footer').style.display = 'none';
+    document.getElementById('login-password').value = '';
+    document.getElementById('login-error').textContent = '';
+}
+
+function showMainApp() {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('main-header').style.display = 'flex';
+    document.getElementById('main-container').style.display = 'block';
+    document.getElementById('main-footer').style.display = 'block';
+    backToHome();
+    loadSettings();
+}
+
+// ===== 設定画面 =====
+
+async function showSettings() {
+    document.querySelectorAll('.welcome-screen, .heart-preparation-screen, .scenario-selection, .dialogue-screen, .feedback-screen, .scenario-creator-screen, .heart-explanation-screen').forEach(screen => {
+        screen.style.display = 'none';
+    });
+    document.querySelector('.settings-screen').style.display = 'block';
+    await loadSettings();
+}
+
+function closeSettings() {
+    document.querySelector('.settings-screen').style.display = 'none';
+    document.querySelector('.welcome-screen').style.display = 'block';
+}
+
+async function loadSettings() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/settings`, {
+            headers: {
+                'Authorization': `Bearer ${sessionToken}`
+            }
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            document.getElementById('api-key').value = data.api_key || '';
+            document.getElementById('ai-model').value = data.model || 'gpt-4o';
+        }
+    } catch (error) {
+        console.error('Failed to load settings:', error);
+    }
+}
+
+async function saveSettings() {
+    const apiKey = document.getElementById('api-key').value;
+    const model = document.getElementById('ai-model').value;
+    const messageEl = document.getElementById('settings-message');
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/settings`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${sessionToken}`
+            },
+            body: JSON.stringify({ api_key: apiKey, model })
+        });
+        
+        if (response.ok) {
+            messageEl.textContent = '設定を保存しました';
+            messageEl.style.color = '#4CAF50';
+            setTimeout(() => { messageEl.textContent = ''; }, 3000);
+        } else {
+            const data = await response.json();
+            messageEl.textContent = data.error || '設定の保存に失敗しました';
+            messageEl.style.color = '#f44336';
+        }
+    } catch (error) {
+        console.error('Failed to save settings:', error);
+        messageEl.textContent = '設定の保存に失敗しました';
+        messageEl.style.color = '#f44336';
+    }
+}
+
+async function changePassword() {
+    const currentPassword = document.getElementById('current-password').value;
+    const newPassword = document.getElementById('new-password').value;
+    const confirmPassword = document.getElementById('confirm-password').value;
+    const messageEl = document.getElementById('settings-message');
+    
+    if (!currentPassword || !newPassword || !confirmPassword) {
+        messageEl.textContent = 'すべてのパスワード欄を入力してください';
+        messageEl.style.color = '#f44336';
+        return;
+    }
+    
+    if (newPassword !== confirmPassword) {
+        messageEl.textContent = '新しいパスワードが一致しません';
+        messageEl.style.color = '#f44336';
+        return;
+    }
+    
+    if (newPassword.length < 6) {
+        messageEl.textContent = 'パスワードは6文字以上にしてください';
+        messageEl.style.color = '#f44336';
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/auth/change-password`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${sessionToken}`
+            },
+            body: JSON.stringify({ 
+                current_password: currentPassword, 
+                new_password: newPassword 
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            messageEl.textContent = 'パスワードを変更しました';
+            messageEl.style.color = '#4CAF50';
+            document.getElementById('current-password').value = '';
+            document.getElementById('new-password').value = '';
+            document.getElementById('confirm-password').value = '';
+            setTimeout(() => { messageEl.textContent = ''; }, 3000);
+        } else {
+            messageEl.textContent = data.error || 'パスワードの変更に失敗しました';
+            messageEl.style.color = '#f44336';
+        }
+    } catch (error) {
+        console.error('Failed to change password:', error);
+        messageEl.textContent = 'パスワードの変更に失敗しました';
+        messageEl.style.color = '#f44336';
+    }
+}
+
+function toggleApiKeyVisibility() {
+    const apiKeyInput = document.getElementById('api-key');
+    apiKeyInput.type = apiKeyInput.type === 'password' ? 'text' : 'password';
+}
+
+// ===== ナビゲーション =====
+
 function backToHome() {
-    // 全ての画面を非表示
-    document.querySelectorAll('.heart-preparation-screen, .scenario-selection, .dialogue-screen, .feedback-screen, .scenario-creator-screen, .heart-explanation-screen').forEach(screen => {
+    document.querySelectorAll('.heart-preparation-screen, .scenario-selection, .dialogue-screen, .feedback-screen, .scenario-creator-screen, .heart-explanation-screen, .settings-screen').forEach(screen => {
         screen.style.display = 'none';
     });
     
-    // ホーム画面を表示
     document.querySelector('.welcome-screen').style.display = 'block';
     
-    // 選択をリセット
     document.querySelectorAll('.heart-card').forEach(card => {
         card.classList.remove('selected');
     });
@@ -347,48 +539,39 @@ function backToHome() {
     selectedHeart = null;
 }
 
-// 心選択画面を表示
 function showHeartSelectionScreen() {
     document.querySelector('.welcome-screen').style.display = 'none';
     document.querySelector('.heart-preparation-screen').style.display = 'block';
 }
 
-// 心を選択
 function selectHeart(heart, element) {
-    // 既存の選択を解除
     document.querySelectorAll('.heart-card').forEach(card => {
         card.classList.remove('selected');
     });
     
-    // 新しい選択を適用
     element.classList.add('selected');
     selectedHeart = heart;
     selectedHeartData = heartMessages[heart];
     
-    // AIメッセージを表示
     const messageDiv = document.getElementById('ai-message');
     const messageText = document.getElementById('heart-message');
     messageText.textContent = selectedHeartData.message;
     messageDiv.classList.add('show');
     
-    // 進むボタンを表示
     document.getElementById('proceed-btn').style.display = 'inline-block';
 }
 
-// 心の解説ページを表示
 function showHeartExplanation() {
     if (!selectedHeart) return;
     
     const explanationData = heartExplanations[selectedHeart];
     
-    // 解説ページの内容を設定
     document.getElementById('explanation-icon').textContent = explanationData.icon;
     document.getElementById('explanation-title').textContent = explanationData.title;
     document.getElementById('explanation-subtitle').textContent = explanationData.subtitle;
     document.getElementById('explanation-origin').innerHTML = explanationData.origin;
     document.getElementById('explanation-clinical').innerHTML = explanationData.clinical;
     
-    // ヒントリストをクリアして追加
     const tipsList = document.getElementById('explanation-tips');
     tipsList.innerHTML = '';
     explanationData.tips.forEach(tip => {
@@ -397,130 +580,22 @@ function showHeartExplanation() {
         tipsList.appendChild(li);
     });
     
-    // 心選択画面を非表示にし、解説画面を表示
     document.querySelector('.heart-preparation-screen').style.display = 'none';
     document.querySelector('.heart-explanation-screen').style.display = 'block';
 }
 
-// シナリオ選択画面へ進む
 function proceedToScenarios() {
     document.querySelector('.heart-explanation-screen').style.display = 'none';
     document.querySelector('.scenario-selection').style.display = 'block';
 }
 
-// シナリオを開始
-function startScenario(scenarioId) {
-    currentScenario = scenarioId;
-    const scenario = scenarios[scenarioId];
-    
-    document.querySelector('.scenario-selection').style.display = 'none';
-    document.querySelector('.dialogue-screen').style.display = 'block';
-    
-    // 選択した心を表示
-    if (selectedHeart) {
-        document.getElementById('reminder-icon').textContent = selectedHeartData.icon;
-        document.getElementById('reminder-text').textContent = `今日の心：${selectedHeartData.name}`;
-    }
-    
-    document.getElementById('scenario-title').textContent = scenario.title;
-    document.getElementById('scenario-description').textContent = scenario.description;
-    
-    const chatArea = document.getElementById('chat-area');
-    chatArea.innerHTML = `
-        <div class="message client">
-            <div class="message-avatar">👤</div>
-            <div class="message-content">
-                ${scenario.initialMessage}
-            </div>
-        </div>
-    `;
-    
-    messageCount = 0;
-}
-
-// メッセージを送信
-function sendMessage() {
-    const input = document.getElementById('message-input');
-    const message = input.value.trim();
-    
-    if (message === '') return;
-    
-    const chatArea = document.getElementById('chat-area');
-    const messageDiv = document.createElement('div');
-    messageDiv.className = 'message therapist';
-    messageDiv.innerHTML = `
-        <div class="message-avatar">
-            <img src="sukoyaka-character.jpeg" alt="すこやか">
-        </div>
-        <div class="message-content">
-            ${message}
-        </div>
-    `;
-    
-    chatArea.appendChild(messageDiv);
-    chatArea.scrollTop = chatArea.scrollHeight;
-    
-    input.value = '';
-    messageCount++;
-    
-    // バックエンド実装時にここでAI応答を取得
-    setTimeout(() => {
-        addClientMessage("（ここにAIクライアントの応答が表示されます）");
-    }, 1000);
-}
-
-// クライアントのメッセージを追加
-function addClientMessage(message) {
-    const chatArea = document.getElementById('chat-area');
-    const messageDiv = document.createElement('div');
-    messageDiv.className = 'message client';
-    messageDiv.innerHTML = `
-        <div class="message-avatar">👤</div>
-        <div class="message-content">
-            ${message}
-        </div>
-    `;
-    
-    chatArea.appendChild(messageDiv);
-    chatArea.scrollTop = chatArea.scrollHeight;
-}
-
-// Enterキーでメッセージを送信
-function handleKeyPress(event) {
-    if (event.key === 'Enter') {
-        sendMessage();
-    }
-}
-
-// 対話を終了してフィードバック画面へ
-function endDialogue() {
-    document.querySelector('.dialogue-screen').style.display = 'none';
-    document.querySelector('.feedback-screen').style.display = 'block';
-    
-    // バックエンド実装時にここで対話の分析とフィードバック生成
-}
-
-// シナリオ選択画面に戻る
-function backToScenarios() {
-    document.querySelector('.dialogue-screen').style.display = 'none';
-    document.querySelector('.feedback-screen').style.display = 'none';
-    document.querySelector('.scenario-creator-screen').style.display = 'none';
-    document.querySelector('.scenario-selection').style.display = 'block';
-}
-
-// 心選択画面に戻る
 function backToHeartSelection() {
-    // 全ての画面を非表示
-    document.querySelector('.dialogue-screen').style.display = 'none';
-    document.querySelector('.feedback-screen').style.display = 'none';
-    document.querySelector('.scenario-creator-screen').style.display = 'none';
-    document.querySelector('.scenario-selection').style.display = 'none';
-    document.querySelector('.heart-explanation-screen').style.display = 'none';
+    document.querySelectorAll('.dialogue-screen, .feedback-screen, .scenario-creator-screen, .scenario-selection, .heart-explanation-screen').forEach(screen => {
+        screen.style.display = 'none';
+    });
     
-    // 導入画面を表示
     document.querySelector('.heart-preparation-screen').style.display = 'block';
     
-    // 選択をリセット
     document.querySelectorAll('.heart-card').forEach(card => {
         card.classList.remove('selected');
     });
@@ -528,81 +603,27 @@ function backToHeartSelection() {
     document.getElementById('proceed-btn').style.display = 'none';
     selectedHeart = null;
     
-    // 省察テキストをクリア
     document.getElementById('personal-reflection').value = '';
 }
 
-// 同じシナリオを再開
-function restartScenario() {
-    document.querySelector('.feedback-screen').style.display = 'none';
-    
-    // 省察テキストをクリア
-    document.getElementById('personal-reflection').value = '';
-    
-    startScenario(currentScenario);
+function backToScenarios() {
+    document.querySelectorAll('.dialogue-screen, .feedback-screen, .scenario-creator-screen').forEach(screen => {
+        screen.style.display = 'none';
+    });
+    document.querySelector('.scenario-selection').style.display = 'block';
 }
 
-// 省察記録をダウンロード
-function downloadReflection() {
-    const reflectionText = document.getElementById('personal-reflection').value;
-    
-    if (!reflectionText.trim()) {
-        alert('省察記録が入力されていません。');
-        return;
-    }
-    
-    // 現在の日時を取得
-    const now = new Date();
-    const dateStr = now.toISOString().split('T')[0]; // YYYY-MM-DD
-    const timeStr = now.toTimeString().split(' ')[0].replace(/:/g, '-'); // HH-MM-SS
-    
-    // ファイル内容を作成
-    const content = `四無量心AIトレーニング - 省察記録
-=============================================
+// ===== シナリオ作成 =====
 
-日時: ${now.toLocaleString('ja-JP')}
-選択した心: ${selectedHeartData.name || '未選択'}
-シナリオ: ${scenarios[currentScenario]?.title || '未記録'}
-
-=============================================
-
-【今日、あなたが一番心を動かされた瞬間はどこでしたか？】
-
-${reflectionText}
-
-=============================================
-© 一般社団法人 子ども心理発達支援センター すこやか
-`;
-    
-    // Blobを作成
-    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-    
-    // ダウンロードリンクを作成
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `四無量心AI_省察記録_${dateStr}_${timeStr}.txt`;
-    
-    // ダウンロードを実行
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    // 成功メッセージ
-    alert('省察記録をダウンロードしました。');
-}
-
-// シナリオ作成画面を表示
 function showScenarioCreator() {
     document.querySelector('.scenario-selection').style.display = 'none';
     document.querySelector('.scenario-creator-screen').style.display = 'block';
 }
 
-// シナリオ作成をキャンセル
 function cancelScenarioCreation() {
     document.querySelector('.scenario-creator-screen').style.display = 'none';
     document.querySelector('.scenario-selection').style.display = 'block';
     
-    // フォームをリセット
     document.getElementById('scenario-theme').value = '';
     document.getElementById('client-age').value = '';
     document.getElementById('scenario-difficulty').value = 'beginner';
@@ -610,8 +631,7 @@ function cancelScenarioCreation() {
     document.querySelectorAll('.checkbox-label input[type="checkbox"]').forEach(cb => cb.checked = false);
 }
 
-// シナリオを生成
-function generateScenario() {
+async function generateScenario() {
     const theme = document.getElementById('scenario-theme').value.trim();
     const age = document.getElementById('client-age').value;
     const difficulty = document.getElementById('scenario-difficulty').value;
@@ -632,22 +652,95 @@ function generateScenario() {
         return;
     }
     
-    // バックエンド実装時にここでAIにシナリオ生成を依頼
-    console.log('シナリオ生成リクエスト:', {
-        theme,
-        age,
-        difficulty,
-        focus: selectedFocus,
-        additionalNotes
-    });
+    const loadingEl = document.getElementById('scenario-loading');
+    loadingEl.style.display = 'block';
     
-    alert('AIによるシナリオ生成機能は、バックエンド実装時に追加されます。\n\n入力内容:\n・テーマ: ' + theme + '\n・年齢層: ' + age + '\n・難易度: ' + difficulty);
-    
-    // 仮の動作：シナリオ選択画面に戻る
-    cancelScenarioCreation();
+    try {
+        const response = await fetch(`${API_BASE_URL}/scenarios/generate`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${sessionToken}`
+            },
+            body: JSON.stringify({
+                theme,
+                age,
+                difficulty,
+                focus: selectedFocus,
+                additional_notes: additionalNotes
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            alert('シナリオを作成しました！シナリオ一覧に追加されました。');
+            cancelScenarioCreation();
+            loadScenarios();
+        } else {
+            alert(data.error || 'シナリオの生成に失敗しました');
+        }
+    } catch (error) {
+        console.error('Failed to generate scenario:', error);
+        alert('シナリオの生成に失敗しました。もう一度お試しください。');
+    } finally {
+        loadingEl.style.display = 'none';
+    }
 }
 
-// シナリオを並び替え
+async function loadScenarios() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/scenarios`, {
+            headers: {
+                'Authorization': `Bearer ${sessionToken}`
+            }
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            const grid = document.getElementById('scenario-grid');
+            
+            // デフォルトシナリオ以外をクリア
+            const defaultScenarios = grid.querySelectorAll('.scenario-card[data-default="true"]');
+            grid.innerHTML = '';
+            defaultScenarios.forEach(card => grid.appendChild(card));
+            
+            // カスタムシナリオを追加
+            data.scenarios.forEach((scenario, index) => {
+                const card = document.createElement('div');
+                card.className = 'scenario-card';
+                card.setAttribute('data-order', 100 + index);
+                card.onclick = () => startScenario('custom_' + scenario.id);
+                
+                const difficultyClass = {
+                    'beginner': 'beginner',
+                    'intermediate': 'intermediate',
+                    'advanced': 'advanced'
+                }[scenario.difficulty] || 'intermediate';
+                
+                const difficultyText = {
+                    'beginner': '初級',
+                    'intermediate': '中級',
+                    'advanced': '上級'
+                }[scenario.difficulty] || '中級';
+                
+                card.innerHTML = `
+                    <h3>
+                        <span>${scenario.title}</span>
+                        <span class="difficulty-indicator ${difficultyClass}">${difficultyText}</span>
+                    </h3>
+                    <p>${scenario.description}</p>
+                    <span class="scenario-tag">カスタム</span>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+    } catch (error) {
+        console.error('Failed to load scenarios:', error);
+    }
+}
+
 function sortScenarios() {
     const sortValue = document.getElementById('sort-select').value;
     const grid = document.getElementById('scenario-grid');
@@ -662,7 +755,6 @@ function sortScenarios() {
             return diffA - diffB;
         });
     } else {
-        // 登録順（元の順序に戻す）
         cards.sort((a, b) => {
             const orderA = parseInt(a.getAttribute('data-order')) || 0;
             const orderB = parseInt(b.getAttribute('data-order')) || 0;
@@ -670,18 +762,315 @@ function sortScenarios() {
         });
     }
     
-    // カードを再配置
     cards.forEach(card => grid.appendChild(card));
 }
 
-// ページ読み込み時に初期化
+// ===== 対話 =====
+
+async function startScenario(scenarioId) {
+    currentScenario = scenarioId;
+    conversationHistory = [];
+    
+    let scenario;
+    if (typeof scenarioId === 'number') {
+        scenario = scenarios[scenarioId];
+    } else {
+        // カスタムシナリオをロード
+        try {
+            const response = await fetch(`${API_BASE_URL}/scenarios/${scenarioId}`, {
+                headers: {
+                    'Authorization': `Bearer ${sessionToken}`
+                }
+            });
+            if (response.ok) {
+                scenario = await response.json();
+            } else {
+                alert('シナリオの読み込みに失敗しました');
+                return;
+            }
+        } catch (error) {
+            console.error('Failed to load scenario:', error);
+            alert('シナリオの読み込みに失敗しました');
+            return;
+        }
+    }
+    
+    currentScenarioData = scenario;
+    
+    document.querySelector('.scenario-selection').style.display = 'none';
+    document.querySelector('.dialogue-screen').style.display = 'block';
+    
+    if (selectedHeart) {
+        document.getElementById('reminder-icon').textContent = selectedHeartData.icon;
+        document.getElementById('reminder-text').textContent = `今日の心：${selectedHeartData.name}`;
+    }
+    
+    document.getElementById('scenario-title').textContent = scenario.title;
+    document.getElementById('scenario-description').textContent = scenario.description;
+    
+    const chatArea = document.getElementById('chat-area');
+    chatArea.innerHTML = `
+        <div class="message client">
+            <div class="message-avatar">👤</div>
+            <div class="message-content">
+                ${scenario.initialMessage || scenario.initial_message}
+            </div>
+        </div>
+    `;
+    
+    conversationHistory.push({
+        role: 'client',
+        content: scenario.initialMessage || scenario.initial_message
+    });
+    
+    messageCount = 0;
+}
+
+async function sendMessage() {
+    const input = document.getElementById('message-input');
+    const message = input.value.trim();
+    
+    if (!message) return;
+    
+    const chatArea = document.getElementById('chat-area');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message therapist';
+    messageDiv.innerHTML = `
+        <div class="message-avatar">
+            <img src="sukoyaka-character.jpeg" alt="すこやか">
+        </div>
+        <div class="message-content">
+            ${message}
+        </div>
+    `;
+    
+    chatArea.appendChild(messageDiv);
+    chatArea.scrollTop = chatArea.scrollHeight;
+    
+    input.value = '';
+    messageCount++;
+    
+    conversationHistory.push({
+        role: 'therapist',
+        content: message
+    });
+    
+    // AI応答を取得
+    const loadingEl = document.getElementById('chat-loading');
+    loadingEl.style.display = 'block';
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/chat`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${sessionToken}`
+            },
+            body: JSON.stringify({
+                scenario_id: currentScenario,
+                selected_heart: selectedHeart,
+                conversation_history: conversationHistory
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            addClientMessage(data.response);
+            conversationHistory.push({
+                role: 'client',
+                content: data.response
+            });
+        } else {
+            addClientMessage('（AIの応答生成に失敗しました。設定でAPI Keyを確認してください）');
+        }
+    } catch (error) {
+        console.error('Chat error:', error);
+        addClientMessage('（エラーが発生しました）');
+    } finally {
+        loadingEl.style.display = 'none';
+    }
+}
+
+function addClientMessage(message) {
+    const chatArea = document.getElementById('chat-area');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message client';
+    messageDiv.innerHTML = `
+        <div class="message-avatar">👤</div>
+        <div class="message-content">
+            ${message}
+        </div>
+    `;
+    
+    chatArea.appendChild(messageDiv);
+    chatArea.scrollTop = chatArea.scrollHeight;
+}
+
+function handleKeyPress(event) {
+    if (event.key === 'Enter') {
+        sendMessage();
+    }
+}
+
+async function endDialogue() {
+    document.querySelector('.dialogue-screen').style.display = 'none';
+    document.querySelector('.feedback-screen').style.display = 'block';
+    
+    const loadingEl = document.getElementById('feedback-loading');
+    loadingEl.style.display = 'block';
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/feedback`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${sessionToken}`
+            },
+            body: JSON.stringify({
+                scenario_id: currentScenario,
+                selected_heart: selectedHeart,
+                conversation_history: conversationHistory
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            displayFeedback(data);
+        } else {
+            document.getElementById('feedback-empathy').textContent = 'フィードバックの生成に失敗しました';
+            document.getElementById('feedback-equanimity').textContent = '';
+        }
+    } catch (error) {
+        console.error('Feedback error:', error);
+        document.getElementById('feedback-empathy').textContent = 'フィードバックの生成に失敗しました';
+        document.getElementById('feedback-equanimity').textContent = '';
+    } finally {
+        loadingEl.style.display = 'none';
+    }
+}
+
+function displayFeedback(data) {
+    document.getElementById('feedback-empathy').textContent = data.empathy_feedback || '';
+    document.getElementById('feedback-equanimity').textContent = data.equanimity_feedback || '';
+    
+    const attitudesEl = document.getElementById('attitude-evaluations');
+    attitudesEl.innerHTML = '';
+    
+    const attitudes = [
+        { key: 'metta', icon: '🌸', title: '慈（Loving-kindness）' },
+        { key: 'karuna', icon: '🌊', title: '悲（Compassion）' },
+        { key: 'mudita', icon: '☀️', title: '喜（Empathic Joy）' },
+        { key: 'upekkha', icon: '🍃', title: '捨（Equanimity）' },
+        { key: 'empathic_understanding', icon: '💧', title: '共感的理解（Empathic Understanding）' },
+        { key: 'unconditional_regard', icon: '🌷', title: '無条件の肯定的配慮（Unconditional Positive Regard）' },
+        { key: 'congruence', icon: '🌾', title: '自己一致（Congruence）' },
+        { key: 'abstinence', icon: '🕊️', title: '臨床的禁欲（Therapeutic Abstinence）' }
+    ];
+    
+    attitudes.forEach(attitude => {
+        if (data.attitudes && data.attitudes[attitude.key]) {
+            const div = document.createElement('div');
+            div.className = 'evaluation-item';
+            div.innerHTML = `
+                <div class="evaluation-header">
+                    <span class="eval-icon">${attitude.icon}</span>
+                    <span class="eval-title">${attitude.title}</span>
+                </div>
+                <p class="evaluation-text">${data.attitudes[attitude.key]}</p>
+            `;
+            attitudesEl.appendChild(div);
+        }
+    });
+    
+    const nextStepsEl = document.getElementById('next-steps-list');
+    nextStepsEl.innerHTML = '';
+    
+    if (data.next_steps && Array.isArray(data.next_steps)) {
+        data.next_steps.forEach(step => {
+            const li = document.createElement('li');
+            li.textContent = step;
+            nextStepsEl.appendChild(li);
+        });
+    }
+}
+
+function restartScenario() {
+    document.querySelector('.feedback-screen').style.display = 'none';
+    document.getElementById('personal-reflection').value = '';
+    startScenario(currentScenario);
+}
+
+function downloadReflection() {
+    const reflectionText = document.getElementById('personal-reflection').value;
+    
+    if (!reflectionText.trim()) {
+        alert('省察記録が入力されていません。');
+        return;
+    }
+    
+    const now = new Date();
+    const dateStr = now.toISOString().split('T')[0];
+    const timeStr = now.toTimeString().split(' ')[0].replace(/:/g, '-');
+    
+    const content = `四無量心AIトレーニング - 省察記録
+=============================================
+
+日時: ${now.toLocaleString('ja-JP')}
+選択した心: ${selectedHeartData.name || '未選択'}
+シナリオ: ${currentScenarioData?.title || '未記録'}
+
+=============================================
+
+【今日、あなたが一番心を動かされた瞬間はどこでしたか？】
+
+${reflectionText}
+
+=============================================
+© 一般社団法人 子ども心理発達支援センター すこやか
+`;
+    
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `四無量心AI_省察記録_${dateStr}_${timeStr}.txt`;
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    alert('省察記録をダウンロードしました。');
+}
+
+// ===== 初期化 =====
+
 window.addEventListener('DOMContentLoaded', function() {
-    // シナリオカードにdata-order属性を追加
     const cards = document.querySelectorAll('.scenario-card');
     cards.forEach((card, index) => {
         card.setAttribute('data-order', index + 1);
+        card.setAttribute('data-default', 'true');
     });
     
-    // 最初はホーム画面（表紙）を表示
-    backToHome();
+    // セッショントークンをチェック
+    const savedToken = localStorage.getItem('sessionToken');
+    if (savedToken) {
+        sessionToken = savedToken;
+        // トークンの有効性を検証
+        fetch(`${API_BASE_URL}/auth/verify`, {
+            headers: {
+                'Authorization': `Bearer ${sessionToken}`
+            }
+        }).then(response => {
+            if (response.ok) {
+                showMainApp();
+            } else {
+                localStorage.removeItem('sessionToken');
+                sessionToken = null;
+            }
+        }).catch(() => {
+            localStorage.removeItem('sessionToken');
+            sessionToken = null;
+        });
+    }
 });
