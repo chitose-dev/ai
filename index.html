@@ -7,7 +7,26 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
+    <!-- ログイン画面 -->
+    <div class="login-screen" id="login-screen">
+        <div class="login-container">
+            <div class="login-header">
+                <img src="sukoyaka-character.jpeg" alt="すこやかキャラクター" class="login-logo">
+                <h2>四無量心AIトレーニング</h2>
+                <div class="subtitle-en">Four Boundless Hearts Training System</div>
+            </div>
+            <div class="login-form">
+                <div class="form-group">
+                    <label for="login-password">パスワード</label>
+                    <input type="password" id="login-password" placeholder="パスワードを入力してください" onkeypress="handleLoginKeyPress(event)">
+                </div>
+                <div class="error-message" id="login-error"></div>
+                <button class="btn btn-primary" onclick="login()">ログイン</button>
+            </div>
+        </div>
+    </div>
+
+    <header id="main-header" style="display: none;">
         <div class="header-left">
             <div class="header-character" onclick="backToHome()" style="cursor: pointer;">
                 <img src="sukoyaka-character.jpeg" alt="すこやかキャラクター">
@@ -17,8 +36,11 @@
                 <div class="subtitle">Four Boundless Hearts Training System</div>
             </div>
         </div>
+        <div class="header-right">
+            <button class="btn btn-settings" onclick="showSettings()">⚙️ 設定</button>
+            <button class="btn btn-logout" onclick="logout()">ログアウト</button>
+        </div>
         <div class="symbols">
-            <!-- 四無量心 -->
             <span class="symbol" title="慈">
                 🌸
                 <div class="symbol-tooltip">慈 Loving-kindness</div>
@@ -35,7 +57,6 @@
                 🍃
                 <div class="symbol-tooltip">捨 Equanimity</div>
             </span>
-            <!-- ロジャース三原則 -->
             <span class="symbol" title="共感的理解">
                 💧
                 <div class="symbol-tooltip">共感的理解 Empathic Understanding</div>
@@ -48,7 +69,6 @@
                 🌾
                 <div class="symbol-tooltip">自己一致 Congruence</div>
             </span>
-            <!-- 臨床的禁欲 -->
             <span class="symbol" title="臨床的禁欲">
                 🕊️
                 <div class="symbol-tooltip">臨床的禁欲 Therapeutic Abstinence</div>
@@ -56,7 +76,59 @@
         </div>
     </header>
     
-    <div class="container">
+    <div class="container" id="main-container" style="display: none;">
+        <!-- 設定画面 -->
+        <div class="settings-screen">
+            <div class="settings-container">
+                <div class="settings-header">
+                    <h2>⚙️ 設定</h2>
+                    <div class="subtitle-en">Settings</div>
+                </div>
+
+                <div class="settings-section">
+                    <h3>🤖 AI設定</h3>
+                    <div class="form-group">
+                        <label for="api-key">OpenAI API Key</label>
+                        <input type="password" id="api-key" placeholder="sk-...">
+                        <button class="btn btn-secondary" onclick="toggleApiKeyVisibility()">表示/非表示</button>
+                    </div>
+                    <div class="form-group">
+                        <label for="ai-model">使用モデル</label>
+                        <select id="ai-model">
+                            <option value="gpt-4o">GPT-4o (推奨)</option>
+                            <option value="gpt-4o-mini">GPT-4o-mini (高速・低コスト)</option>
+                            <option value="gpt-4-turbo">GPT-4 Turbo</option>
+                            <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3>🔐 セキュリティ設定</h3>
+                    <div class="form-group">
+                        <label for="current-password">現在のパスワード</label>
+                        <input type="password" id="current-password" placeholder="現在のパスワード">
+                    </div>
+                    <div class="form-group">
+                        <label for="new-password">新しいパスワード</label>
+                        <input type="password" id="new-password" placeholder="新しいパスワード">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm-password">新しいパスワード（確認）</label>
+                        <input type="password" id="confirm-password" placeholder="新しいパスワード（確認）">
+                    </div>
+                    <button class="btn btn-primary" onclick="changePassword()">パスワードを変更</button>
+                </div>
+
+                <div class="message-box" id="settings-message"></div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="saveSettings()">設定を保存</button>
+                    <button class="btn btn-secondary" onclick="closeSettings()">キャンセル</button>
+                </div>
+            </div>
+        </div>
+
         <!-- ウェルカムページ（表紙） -->
         <div class="welcome-screen">
             <div class="welcome-container">
@@ -264,7 +336,7 @@
 
                 <div class="scenario-card" onclick="startScenario(2)">
                     <h3>
-                        <span>シナリオ2：親子関係の葛藤</span>
+                        <span>シナリオ2:親子関係の葛藤</span>
                         <span class="difficulty-indicator intermediate">中級</span>
                     </h3>
                     <p>小学5年生の男子児童。両親の期待に応えたい気持ちと、自分のやりたいことの間で揺れている。</p>
@@ -361,6 +433,11 @@
                     ></textarea>
                 </div>
 
+                <div class="loading-indicator" id="scenario-loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>AIがシナリオを生成しています...</p>
+                </div>
+
                 <div class="action-buttons">
                     <button class="btn btn-primary" onclick="generateScenario()">
                         ✨ AIにシナリオを生成させる
@@ -394,6 +471,11 @@
                     </div>
                 </div>
 
+                <div class="loading-indicator" id="chat-loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>AIが応答を生成しています...</p>
+                </div>
+
                 <div class="input-area">
                     <input type="text" id="message-input" placeholder="あなたの応答を入力してください..." onkeypress="handleKeyPress(event)">
                     <button class="btn btn-primary" onclick="sendMessage()">送信</button>
@@ -415,90 +497,32 @@
                     <p>あなたの対話を振り返ってみましょう</p>
                 </div>
 
-                <div class="reflection-section">
-                    <h3>💗 共感的理解について</h3>
-                    <p>あなたの応答には、相手の世界をそのまま受け取ろうとする姿勢が感じられました。特に「〜と感じているんですね」という言葉には、相手の内的照合枠に寄り添う意図が表れていました。</p>
-                    <p>一方で、少し焦りが言葉に現れた場面もあったかもしれません。相手の沈黙の中に、どんな気持ちを感じていましたか？</p>
+                <div class="loading-indicator" id="feedback-loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>AIが対話を分析しています...</p>
                 </div>
 
-                <div class="reflection-section">
-                    <h3>🍃 平静（捨）と待つ力</h3>
-                    <p>対話の中で、相手が言葉を探している時間を大切にしていましたね。焦らず待っていてくれたこと、それが相手の安心につながっていたように見えます。</p>
-                    <p>「助けたい」という気持ちが強くなる瞬間がありましたか？その時、あなたの内側ではどんなことが起きていたでしょうか。</p>
-                </div>
+                <div id="feedback-content">
+                    <div class="reflection-section">
+                        <h3>💗 共感的理解について</h3>
+                        <p id="feedback-empathy">フィードバックを生成中...</p>
+                    </div>
 
-                <div class="reflection-section">
-                    <h3>✨ 臨床態度の観点から</h3>
-                    <p style="color: #666; margin-bottom: 20px;">今回の対話における、各臨床態度の実践を振り返ってみましょう。</p>
-                    
-                    <div class="attitude-evaluations">
-                        <div class="evaluation-item">
-                            <div class="evaluation-header">
-                                <span class="eval-icon">🌸</span>
-                                <span class="eval-title">慈（Loving-kindness）</span>
-                            </div>
-                            <p class="evaluation-text">相手の幸せを願う温かさが、あなたの言葉の端々から感じられました。焦らず、ただ"幸せであってほしい"という願いを静かに向けることができていましたね。</p>
-                        </div>
+                    <div class="reflection-section">
+                        <h3>🍃 平静（捨）と待つ力</h3>
+                        <p id="feedback-equanimity">フィードバックを生成中...</p>
+                    </div>
 
-                        <div class="evaluation-item">
-                            <div class="evaluation-header">
-                                <span class="eval-icon">🌊</span>
-                                <span class="eval-title">悲（Compassion）</span>
-                            </div>
-                            <p class="evaluation-text">相手の苦しみを消そうとせず、共に感じる姿勢がありました。あなたがそばにいることで、相手の痛みが少しやわらいでいたように見えます。</p>
-                        </div>
-
-                        <div class="evaluation-item">
-                            <div class="evaluation-header">
-                                <span class="eval-icon">☀️</span>
-                                <span class="eval-title">喜（Empathic Joy）</span>
-                            </div>
-                            <p class="evaluation-text">相手の小さな変化や成長を見つけ、それを心から喜ぶ姿勢が感じられました。比較や評価ではなく、ただ"ともにうれしい"という気持ちが表れていましたね。</p>
-                        </div>
-
-                        <div class="evaluation-item">
-                            <div class="evaluation-header">
-                                <span class="eval-icon">🍃</span>
-                                <span class="eval-title">捨（Equanimity）</span>
-                            </div>
-                            <p class="evaluation-text">すべてを抱え込まず、判断や執着を手放す瞬間がありました。波が来ても動じない、静かな湖のような穏やかさを保つことができていましたね。</p>
-                        </div>
-
-                        <div class="evaluation-item">
-                            <div class="evaluation-header">
-                                <span class="eval-icon">💧</span>
-                                <span class="eval-title">共感的理解（Empathic Understanding）</span>
-                            </div>
-                            <p class="evaluation-text">言葉の奥にある"その人の世界"を感じようとする姿勢がありました。相手の立場から世界を眺めることで、相手の内的照合枠に寄り添うことができていました。</p>
-                        </div>
-
-                        <div class="evaluation-item">
-                            <div class="evaluation-header">
-                                <span class="eval-icon">🌷</span>
-                                <span class="eval-title">無条件の肯定的配慮（Unconditional Positive Regard）</span>
-                            </div>
-                            <p class="evaluation-text">相手の行動の善し悪しを超えて、存在そのものを大切に思う態度が感じられました。"あなたがここにいてくれていい"という肯定が、あなたの存在から伝わっていました。</p>
-                        </div>
-
-                        <div class="evaluation-item">
-                            <div class="evaluation-header">
-                                <span class="eval-icon">🌾</span>
-                                <span class="eval-title">自己一致（Congruence）</span>
-                            </div>
-                            <p class="evaluation-text">感じていること、考えていること、言葉が重なる瞬間がありました。正しさより誠実さを大切にし、飾らずありのままのあなたでいることができていましたね。</p>
-                        </div>
-
-                        <div class="evaluation-item">
-                            <div class="evaluation-header">
-                                <span class="eval-icon">🕊️</span>
-                                <span class="eval-title">臨床的禁欲（Therapeutic Abstinence）</span>
-                            </div>
-                            <p class="evaluation-text">自分の欲求や承認欲を脇に置き、相手の物語に入りすぎず静けさを保つことができていました。あなたの静けさが、相手にとって安全な空間を作っていました。</p>
+                    <div class="reflection-section">
+                        <h3>✨ 臨床態度の観点から</h3>
+                        <p style="color: #666; margin-bottom: 20px;">今回の対話における、各臨床態度の実践を振り返ってみましょう。</p>
+                        
+                        <div class="attitude-evaluations" id="attitude-evaluations">
+                            <!-- AIが生成したフィードバックがここに表示されます -->
                         </div>
                     </div>
                 </div>
 
-                <!-- 省察入力セクション -->
                 <div class="personal-reflection-section">
                     <h3>📝 あなた自身の省察</h3>
                     <p class="prompt">今日、あなたが一番心を動かされた瞬間はどこでしたか？<br>
@@ -512,10 +536,8 @@
 
                 <div class="next-steps">
                     <h4>📌 次の実践に向けて</h4>
-                    <ul>
-                        <li>沈黙の中で感じた自分の焦りに気づくことができました</li>
-                        <li>相手の言葉の奥にある感情に耳を傾ける姿勢を大切にしましょう</li>
-                        <li>「成果」を手放し、相手のペースを信頼する練習を続けてみましょう</li>
+                    <ul id="next-steps-list">
+                        <li>フィードバックを生成中...</li>
                     </ul>
                 </div>
 
@@ -528,7 +550,7 @@
         </div>
     </div>
 
-    <footer>
+    <footer id="main-footer" style="display: none;">
         <p>四無量心AIトレーニング - Four Boundless Hearts Training System</p>
         <p>© 一般社団法人 子ども心理発達支援センター すこやか</p>
     </footer>
