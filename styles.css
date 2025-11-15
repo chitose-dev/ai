@@ -5,13 +5,63 @@
 }
 
 body {
-    font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif;
+    font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo', sans-serif;
     background: linear-gradient(135deg, #eaf0b4 0%, #f5f7c4 100%);
     min-height: 100vh;
     padding: 0;
     margin: 0;
 }
 
+/* ===== ログイン画面 ===== */
+.login-screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.login-container {
+    background: white;
+    border-radius: 20px;
+    padding: 50px 40px;
+    box-shadow: 0 8px 30px rgba(139, 115, 85, 0.2);
+    max-width: 400px;
+    width: 100%;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.login-logo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+}
+
+.login-header h2 {
+    color: #8b7355;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.login-form {
+    margin-top: 30px;
+}
+
+.error-message {
+    color: #f44336;
+    font-size: 14px;
+    margin: 10px 0;
+    text-align: center;
+    min-height: 20px;
+}
+
+/* ===== ヘッダー ===== */
 header {
     position: sticky;
     top: 0;
@@ -25,6 +75,8 @@ header {
     box-shadow: 0 2px 10px rgba(234, 240, 180, 0.3);
     width: 100%;
     box-sizing: border-box;
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
 .container {
@@ -37,6 +89,42 @@ header {
     display: flex;
     align-items: center;
     gap: 15px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-settings, .btn-logout {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.btn-settings {
+    background: #f0f0f0;
+    color: #666;
+}
+
+.btn-settings:hover {
+    background: #e0e0e0;
+    transform: translateY(-1px);
+}
+
+.btn-logout {
+    background: #fef6b0;
+    color: #8b7355;
+}
+
+.btn-logout:hover {
+    background: #eaf0b4;
+    transform: translateY(-1px);
 }
 
 .header-character {
@@ -80,6 +168,7 @@ h1 {
 .symbols {
     display: flex;
     gap: 12px;
+    flex-wrap: wrap;
 }
 
 .symbol {
@@ -95,7 +184,7 @@ h1 {
 
 .symbol-tooltip {
     position: absolute;
-    bottom: -35px;
+    bottom: -40px;
     left: 50%;
     transform: translateX(-50%);
     background: rgba(0, 0, 0, 0.8);
@@ -107,13 +196,95 @@ h1 {
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease;
+    z-index: 1000;
 }
 
 .symbol:hover .symbol-tooltip {
     opacity: 1;
 }
 
-/* ウェルカムページ（表紙） */
+/* ===== 設定画面 ===== */
+.settings-screen {
+    display: none;
+}
+
+.settings-container {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(139, 115, 85, 0.15);
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.settings-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.settings-header h2 {
+    color: #8b7355;
+    font-size: 26px;
+    margin-bottom: 5px;
+}
+
+.settings-header .subtitle-en {
+    color: #9d8b6f;
+    font-size: 14px;
+    font-style: italic;
+}
+
+.settings-section {
+    background: #fef6b0;
+    padding: 25px;
+    border-radius: 15px;
+    margin-bottom: 25px;
+    border-left: 4px solid #d4c17f;
+}
+
+.settings-section h3 {
+    color: #8b7355;
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.message-box {
+    text-align: center;
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 10px;
+    font-size: 14px;
+    min-height: 20px;
+}
+
+/* ===== ローディング表示 ===== */
+.loading-indicator {
+    display: none;
+    text-align: center;
+    padding: 30px;
+}
+
+.spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #8b7355;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 15px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-indicator p {
+    color: #666;
+    font-size: 14px;
+}
+
+/* ===== ウェルカムページ（表紙） ===== */
 .welcome-screen {
     display: block;
 }
@@ -164,6 +335,10 @@ h1 {
     line-height: 1.8;
 }
 
+.welcome-description p {
+    margin-bottom: 15px;
+}
+
 .principle-icons {
     display: flex;
     justify-content: center;
@@ -188,7 +363,7 @@ h1 {
     color: #9d8b6f;
 }
 
-/* 心の解説ページ */
+/* ===== 心の解説ページ ===== */
 .heart-explanation-screen {
     display: none;
 }
@@ -284,9 +459,10 @@ h1 {
     position: absolute;
     left: 0;
     color: #5a9fb8;
+    font-weight: bold;
 }
 
-/* 導入画面（心の準備） */
+/* ===== 導入画面（心の準備） ===== */
 .heart-preparation-screen {
     display: none;
 }
@@ -303,18 +479,6 @@ h1 {
     margin-bottom: 30px;
 }
 
-.preparation-hero-image {
-    max-width: 400px;
-    width: 100%;
-    margin: 0 auto 20px auto;
-}
-
-.preparation-hero-image img {
-    width: 100%;
-    height: auto;
-    border-radius: 15px;
-}
-
 .preparation-header h2 {
     color: #8b7355;
     font-size: 26px;
@@ -323,6 +487,7 @@ h1 {
     align-items: center;
     justify-content: center;
     gap: 10px;
+    flex-wrap: wrap;
 }
 
 .preparation-header p {
@@ -421,13 +586,14 @@ h1 {
     font-size: 15px;
     line-height: 1.8;
     margin-bottom: 10px;
+    white-space: pre-line;
 }
 
 .ai-message p:last-child {
     margin-bottom: 0;
 }
 
-/* シナリオ選択画面 */
+/* ===== シナリオ選択画面 ===== */
 .scenario-selection {
     display: none;
 }
@@ -492,6 +658,7 @@ h1 {
     color: #666;
     font-size: 14px;
     line-height: 1.6;
+    margin-top: 10px;
 }
 
 .scenario-tag {
@@ -543,7 +710,7 @@ h1 {
     border-color: #d4c17f;
 }
 
-/* 対話画面 */
+/* ===== 対話画面 ===== */
 .dialogue-screen {
     display: none;
 }
@@ -650,11 +817,13 @@ h1 {
     padding: 15px;
     border-radius: 12px;
     line-height: 1.6;
+    word-wrap: break-word;
 }
 
 .message.client .message-content {
     background: white;
     color: #333;
+    border: 1px solid #e8f4f8;
 }
 
 .message.therapist .message-content {
@@ -677,6 +846,7 @@ h1 {
     font-size: 14px;
     outline: none;
     transition: border-color 0.3s;
+    font-family: inherit;
 }
 
 .input-area input:focus {
@@ -688,6 +858,7 @@ h1 {
     white-space: nowrap;
 }
 
+/* ===== ボタン ===== */
 .btn {
     padding: 12px 30px;
     border: none;
@@ -696,6 +867,7 @@ h1 {
     cursor: pointer;
     transition: all 0.3s ease;
     font-weight: 600;
+    font-family: inherit;
 }
 
 .btn-primary {
@@ -716,6 +888,7 @@ h1 {
 
 .btn-secondary:hover {
     background: #e0e0e0;
+    transform: translateY(-1px);
 }
 
 .btn-create {
@@ -742,7 +915,7 @@ h1 {
     flex-wrap: wrap;
 }
 
-/* フィードバック画面 */
+/* ===== フィードバック画面 ===== */
 .feedback-screen {
     display: none;
 }
@@ -800,53 +973,7 @@ h1 {
     margin-bottom: 10px;
 }
 
-.shimuryo-aspects {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 15px;
-    margin-top: 20px;
-}
-
-.aspect-card {
-    background: white;
-    padding: 20px 15px;
-    border-radius: 10px;
-    text-align: center;
-    transition: all 0.3s ease;
-    border: 2px solid #eaf0b4;
-}
-
-.aspect-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 15px rgba(139, 115, 85, 0.2);
-    border-color: #d4c17f;
-}
-
-.aspect-card .icon {
-    font-size: 28px;
-    margin-bottom: 10px;
-}
-
-.aspect-card .label-ja {
-    color: #8b7355;
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 3px;
-}
-
-.aspect-card .label-en {
-    color: #9d8b6f;
-    font-size: 11px;
-    font-style: italic;
-    margin-bottom: 8px;
-}
-
-.aspect-card .description {
-    color: #888;
-    font-size: 12px;
-}
-
-/* 評価項目のスタイル */
+/* ===== 評価項目のスタイル ===== */
 .attitude-evaluations {
     display: flex;
     flex-direction: column;
@@ -893,7 +1020,7 @@ h1 {
     padding-left: 34px;
 }
 
-/* 省察入力セクション */
+/* ===== 省察入力セクション ===== */
 .personal-reflection-section {
     background: #e8f4f8;
     padding: 25px;
@@ -955,6 +1082,7 @@ h1 {
     margin-top: 15px;
     font-weight: 600;
     transition: all 0.3s ease;
+    font-family: inherit;
 }
 
 .download-reflection-btn:hover {
@@ -968,6 +1096,7 @@ h1 {
     padding: 20px;
     border-radius: 12px;
     margin-top: 30px;
+    border-left: 4px solid #e67e22;
 }
 
 .next-steps h4 {
@@ -986,6 +1115,7 @@ h1 {
     padding: 8px 0;
     padding-left: 25px;
     position: relative;
+    line-height: 1.6;
 }
 
 .next-steps li:before {
@@ -993,9 +1123,10 @@ h1 {
     position: absolute;
     left: 0;
     color: #e67e22;
+    font-weight: bold;
 }
 
-/* シナリオ作成画面 */
+/* ===== シナリオ作成画面 ===== */
 .scenario-creator-screen {
     display: none;
 }
@@ -1013,6 +1144,7 @@ h1 {
 }
 
 .form-group input[type="text"],
+.form-group input[type="password"],
 .form-group textarea,
 .form-group select {
     width: 100%;
@@ -1026,6 +1158,7 @@ h1 {
 }
 
 .form-group input[type="text"]:focus,
+.form-group input[type="password"]:focus,
 .form-group textarea:focus,
 .form-group select:focus {
     border-color: #d4c17f;
@@ -1065,7 +1198,7 @@ h1 {
     cursor: pointer;
 }
 
-/* フッター */
+/* ===== フッター ===== */
 footer {
     text-align: center;
     padding: 30px 20px;
@@ -1076,6 +1209,8 @@ footer {
 footer p {
     margin: 5px 0;
 }
+
+/* ===== レスポンシブデザイン ===== */
 
 /* タブレットサイズ */
 @media (max-width: 1200px) {
@@ -1100,10 +1235,6 @@ footer p {
     .scenario-grid {
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     }
-
-    .shimuryo-aspects {
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    }
 }
 
 /* モバイルサイズ */
@@ -1126,11 +1257,17 @@ footer p {
     }
 
     .symbols {
-        gap: 8px;
+        display: none;
     }
 
-    .symbol {
-        font-size: 18px;
+    .header-right {
+        flex-direction: row;
+        gap: 5px;
+    }
+
+    .btn-settings, .btn-logout {
+        padding: 6px 15px;
+        font-size: 12px;
     }
 
     .container {
@@ -1139,12 +1276,13 @@ footer p {
 
     .preparation-container,
     .dialogue-container,
-    .feedback-container {
+    .feedback-container,
+    .settings-container {
         padding: 25px 20px;
     }
 
     .preparation-header h2 {
-        font-size: 22px;
+        font-size: 20px;
     }
 
     .preparation-header p {
@@ -1180,14 +1318,11 @@ footer p {
 
     .chat-area {
         height: 350px;
+        padding: 15px;
     }
 
     .checkbox-group {
         grid-template-columns: 1fr;
-    }
-
-    .shimuryo-aspects {
-        grid-template-columns: repeat(2, 1fr);
     }
 
     .action-buttons {
@@ -1211,6 +1346,15 @@ footer p {
         padding: 12px 30px;
         font-size: 14px;
     }
+
+    .login-container {
+        padding: 30px 20px;
+    }
+
+    .login-logo {
+        width: 80px;
+        height: 80px;
+    }
 }
 
 /* 小型モバイル */
@@ -1227,7 +1371,19 @@ footer p {
         font-size: 12px;
     }
 
-    .shimuryo-aspects {
-        grid-template-columns: 1fr;
+    .welcome-header h2 {
+        font-size: 24px;
+    }
+
+    .welcome-description {
+        font-size: 14px;
+    }
+
+    .principle-icon .icon {
+        font-size: 20px;
+    }
+
+    .principle-icon .name {
+        font-size: 11px;
     }
 }
