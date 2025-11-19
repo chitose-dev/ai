@@ -1014,6 +1014,28 @@ function downloadReflection() {
     const dateStr = now.toISOString().split('T')[0];
     const timeStr = now.toTimeString().split(' ')[0].replace(/:/g, '-');
     
+    // フィードバック内容を取得
+    const empathyFeedback = document.getElementById('feedback-empathy')?.textContent || '';
+    const equanimityFeedback = document.getElementById('feedback-equanimity')?.textContent || '';
+    
+    // 臨床態度の評価を取得
+    let attitudesText = '';
+    const attitudeEvaluations = document.querySelectorAll('.evaluation-item');
+    attitudeEvaluations.forEach(item => {
+        const title = item.querySelector('.eval-title')?.textContent || '';
+        const text = item.querySelector('.evaluation-text')?.textContent || '';
+        if (title && text) {
+            attitudesText += `\n【${title}】\n${text}\n`;
+        }
+    });
+    
+    // 次のステップを取得
+    let nextStepsText = '';
+    const nextStepsList = document.querySelectorAll('#next-steps-list li');
+    nextStepsList.forEach((item, index) => {
+        nextStepsText += `${index + 1}. ${item.textContent}\n`;
+    });
+    
     const content = `四無量心AIトレーニング - 省察記録
 =============================================
 
@@ -1023,7 +1045,23 @@ function downloadReflection() {
 
 =============================================
 
-【今日、あなたが一番心を動かされた瞬間はどこでしたか？】
+【AIからのフィードバック】
+
+■ 共感的理解について
+${empathyFeedback}
+
+■ 平静（捨）と待つ力
+${equanimityFeedback}
+
+■ 各臨床態度の評価
+${attitudesText}
+
+■ 次の実践に向けて
+${nextStepsText}
+
+=============================================
+
+【あなた自身の省察】
 
 ${reflectionText}
 
@@ -1042,7 +1080,6 @@ ${reflectionText}
     
     alert('省察記録をダウンロードしました。');
 }
-
 // ===== 初期化 =====
 
 window.addEventListener('DOMContentLoaded', function() {
