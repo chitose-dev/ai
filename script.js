@@ -1,5 +1,5 @@
 // API設定
-const API_BASE_URL = window.location.origin + '/api';
+const API_BASE_URL = 'https://shimuryo-ai-yi6i57qx4a-an.a.run.app' + '/api';
 
 // セッション管理
 let sessionToken = null;
